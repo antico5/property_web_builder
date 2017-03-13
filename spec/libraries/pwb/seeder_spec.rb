@@ -3,12 +3,11 @@ require 'pwb/seeder'
 
 module Pwb
   RSpec.describe 'Seeder' do
-    before(:each) do
+    before(:all) do
       Pwb::Seeder.seed!
     end
-
     it 'creates a landing page hero entry' do
-      expect(Pwb::Content.find_by_key('landingPageHero')).to be_present
+      expect(Pwb::Content.find_by_key('landingCarousel1')).to be_present
     end
 
     it 'creates an about_us entry' do
@@ -19,9 +18,8 @@ module Pwb
       expect(Pwb::Content.where(tag: 'content-area-cols').count).to eq(3)
     end
 
-    it 'creates 1 prop entry' do
-      expect(Pwb::Prop.count).to eq(1)
+    it 'creates 4 prop entries' do
+      expect(Pwb::Prop.count).to eq(4)
     end
-
   end
 end

@@ -55,16 +55,42 @@ module I18n
         serialize :interpolations, Array
 
         class << self
+
+
+          def import(file)
+            # byebug
+            CSV.foreach(file.path, headers: true) do |row|
+              if row.to_hash["locale"].present? && row.to_hash["key"].present?
+                # Translation.create! row.to_hash
+                trsl = find_by_key(row["key"]) || new
+                trsl.attributes = row.to_hash.slice("key","value","locale")
+                  # *accessible_attributes)
+                trsl.save!
+              end
+            end
+          end
+
+          # def to_csv export_column_names=nil
+          #   # http://railscasts.com/episodes/362-exporting-csv-and-excel?view=asciicast
+          #   export_column_names = export_column_names || column_names
+          #   CSV.generate do |csv|
+          #     csv << export_column_names
+          #     all.each do |translation|
+          #       csv << translation.attributes.values_at(*export_column_names)
+          #     end
+          #   end
+          # end
+
           def locale(locale)
-            where(:locale => locale.to_s)
+            where(locale: locale.to_s)
           end
 
           def lookup(keys, *separator)
             column_name = connection.quote_column_name('key')
-            keys = Array(keys).map! { |key| key.to_s }
+            keys = Array(keys).map!(&:to_s)
 
             unless separator.empty?
-              warn "[DEPRECATION] Giving a separator to Translation.lookup is deprecated. " <<
+              warn "[DEPRECATION] Giving a separator to Translation.lookup is deprecated. " \
                 "You can change the internal separator by overwriting FLATTEN_SEPARATOR."
             end
 
@@ -78,7 +104,7 @@ module I18n
         end
 
         def interpolates?(key)
-          self.interpolations.include?(key) if self.interpolations
+          interpolations.include?(key) if interpolations
         end
 
         def value
@@ -104,22 +130,21 @@ module I18n
           write_attribute(:value, value)
         end
 
-
         # alt names for key and value
         def i18n_key
           key
         end
+
         def i18n_value
           value
         end
 
         # https://quickleft.com/blog/keeping-your-json-response-lean-in-rails/
-        def as_json(options={})
-          super(:only => [:id,:locale,:interpolations],
-                :methods => [:i18n_key,:i18n_value]
+        def as_json(_options = {})
+          super(only: [:id, :locale, :interpolations],
+                methods: [:i18n_key, :i18n_value]
                 )
         end
-
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161222085708) do
+ActiveRecord::Schema.define(version: 20170222100759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,8 +62,6 @@ ActiveRecord::Schema.define(version: 20161222085708) do
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
     t.string   "theme_name"
-    t.index ["company_id"], name: "index_pwb_agencies_on_company_id", unique: true, using: :btree
-    t.index ["company_name"], name: "index_pwb_agencies_on_company_name", using: :btree
   end
 
   create_table "pwb_clients", force: :cascade do |t|
@@ -188,7 +186,7 @@ ActiveRecord::Schema.define(version: 20161222085708) do
     t.string   "reference"
     t.integer  "year_construction",                             default: 0,     null: false
     t.integer  "count_bedrooms",                                default: 0,     null: false
-    t.integer  "count_bathrooms",                               default: 0,     null: false
+    t.float    "count_bathrooms",                               default: 0.0,   null: false
     t.integer  "count_toilets",                                 default: 0,     null: false
     t.integer  "count_garages",                                 default: 0,     null: false
     t.float    "plot_area",                                     default: 0.0,   null: false
@@ -248,6 +246,7 @@ ActiveRecord::Schema.define(version: 20161222085708) do
     t.float    "longitude"
     t.datetime "created_at",                                                    null: false
     t.datetime "updated_at",                                                    null: false
+    t.integer  "area_unit",                                     default: 0
     t.index ["archived"], name: "index_pwb_props_on_archived", using: :btree
     t.index ["flags"], name: "index_pwb_props_on_flags", using: :btree
     t.index ["for_rent_long_term"], name: "index_pwb_props_on_for_rent_long_term", using: :btree
@@ -303,6 +302,34 @@ ActiveRecord::Schema.define(version: 20161222085708) do
     t.index ["confirmation_token"], name: "index_pwb_users_on_confirmation_token", unique: true, using: :btree
     t.index ["email"], name: "index_pwb_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_pwb_users_on_reset_password_token", unique: true, using: :btree
+  end
+
+  create_table "pwb_websites", force: :cascade do |t|
+    t.string   "analytics_id"
+    t.integer  "analytics_id_type"
+    t.string   "company_display_name"
+    t.string   "email_for_general_contact_form"
+    t.string   "email_for_property_contact_form"
+    t.integer  "contact_address_id"
+    t.integer  "flags",                           default: 0,                                                                                                                                   null: false
+    t.string   "theme_name"
+    t.string   "google_font_name"
+    t.json     "configuration",                   default: {}
+    t.json     "style_variables_for_theme",       default: {}
+    t.text     "sale_price_options_from",         default: ["", "25,000", "50,000", "75,000", "100,000", "150,000", "250,000", "500,000", "1,000,000", "2,000,000", "5,000,000", "10,000,000"],              array: true
+    t.text     "sale_price_options_till",         default: ["", "25,000", "50,000", "75,000", "100,000", "150,000", "250,000", "500,000", "1,000,000", "2,000,000", "5,000,000", "10,000,000"],              array: true
+    t.text     "rent_price_options_from",         default: ["", "250", "500", "750", "1,000", "1,500", "2,500", "5,000"],                                                                                    array: true
+    t.text     "rent_price_options_till",         default: ["", "250", "500", "750", "1,000", "1,500", "2,500", "5,000"],                                                                                    array: true
+    t.text     "supported_locales",               default: ["en-UK"],                                                                                                                                        array: true
+    t.text     "supported_currencies",            default: [],                                                                                                                                               array: true
+    t.string   "default_client_locale",           default: "en-UK"
+    t.string   "default_admin_locale",            default: "en-UK"
+    t.string   "default_currency",                default: "EUR"
+    t.integer  "default_area_unit",               default: 0
+    t.json     "social_media",                    default: {}
+    t.text     "raw_css"
+    t.datetime "created_at",                                                                                                                                                                    null: false
+    t.datetime "updated_at",                                                                                                                                                                    null: false
   end
 
   create_table "translations", force: :cascade do |t|

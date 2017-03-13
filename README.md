@@ -6,9 +6,15 @@ This project has been created to address a glaring gap in the rails ecosystem: t
 
 The result is that WordPress has become the dominant tool for creating real estate websites.  This is far from ideal and PropertyWebBuilder seeks to address this.
 
-Read more about this here: [https://etewiah.github.io/property_web_builder](https://etewiah.github.io/property_web_builder/)
+Read more about this here: [http://propertywebbuilder.com](http://propertywebbuilder.com)
 
 ##[Demo](https://propertywebbuilder.herokuapp.com/)
+
+You can try out a demo at [https://propertywebbuilder.herokuapp.com](https://propertywebbuilder.herokuapp.com/)
+
+To see the admin panel, login as user admin@example.com with a password of "pwb123456".
+
+![pwb_iphone_landing](https://cloud.githubusercontent.com/assets/1741198/22990222/bfec0168-f3b8-11e6-89df-b950c4979970.png)
 
 ## Rails Version
 
@@ -21,15 +27,31 @@ PropertyWebBuilder runs with Ruby >= 2.0.0.
 
 ## Installation
 
-Install into an existing Rails project by adding this line in your applications's Gemfile:
+Install into an existing Rails project by adding these lines in your applications's Gemfile:
 
 ```ruby
 gem 'pwb', git: 'https://github.com/etewiah/property_web_builder', branch: 'master'
+gem 'globalize', git: 'https://github.com/globalize/globalize'
+
 ```
 
+Also, be sure to use Postgres as your database (by having the "pg" gem and Postgres installed locally 
 And then execute:
 ```bash
 $ bundle
+```
+
+Mount the PropertyWebBuilder by adding the following to your routes.rb file:
+```ruby
+mount Pwb::Engine => '/'
+```
+
+and run the ff commands from the console:
+```bash
+rails pwb:install:migrations
+rails db:create
+rails db:migrate
+rails pwb:db:seed
 ```
 
 ## Deploying to Heroku
@@ -47,7 +69,24 @@ If you are too lazy to read about deploying, you can simply [sign up for Heroku]
 
 You can see an example of a site created with PropertyWebBuilder here:
 
-[http://re-renting.propertywebbuilder.com](http://re-renting.propertywebbuilder.com)
+[http://re-renting.com](http://re-renting.com)
+
+And a video about how to deploy to heroku here:
+
+[![Depoly PWB to heroku](http://img.youtube.com/vi/hyapXTwGyr4/0.jpg)](http://www.youtube.com/watch?v=hyapXTwGyr4 "Deploy PWB to heroku")
+
+## Features
+
+* Multilingual
+* Multi-currency
+* Powerful search component
+* Fully featured admin panel
+* Google maps integration
+* Customisable look and feel
+* Easily extendable
+* Search engine friendly
+* Mobile friendly responsive layout
+* Fully open source
 
 ## Coming soon
 
@@ -79,7 +118,7 @@ I would like PropertyWebBuilder to be available in as many languages as possible
 
 PropertyWebBuilder is currently sponsored by Coddde, Ruby On Rails consultants based in Spain and Chile:
 <a href="http://coddde.com/en/" rel="Coddde">
-![Coddde](http://coddde.com/wp-content/uploads/2016/02/free_logo_8-e1455725264385.png)
+![Coddde](http://coddde.com/wp-content/uploads/2017/01/coddde_logo.png)
 </a>
 
 If you wish to sponsor this project please email me directly (opensource at propertywebbuilder.com).
@@ -88,6 +127,3 @@ If you wish to sponsor this project please email me directly (opensource at prop
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-NB: The creator of PropertyWebBuilder is opposed to the racist statements made by Donald Trump during his presidential campaign of 2016 and would prefer that people who agree with his racist statements do not use this project ;)
-
-NB2: Turns out the above sentence attracted a lot of attention so here's a brief explanation: [https://medium.com/@weebrix/open-source-is-political-9f7fcc63c357#.oajx4zl9r](https://medium.com/@weebrix/open-source-is-political-9f7fcc63c357#.oajx4zl9r)

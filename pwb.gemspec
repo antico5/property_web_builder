@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency 'rails', '~> 5.0.0', '>= 5.0.0.1'
-  s.add_dependency 'money-rails'
+  s.add_dependency 'money-rails', '~>1'
   # s.add_dependency 'globalize', '~> 5.0.0'
   # cannot add globalize here till there is a rails 5
   # compatible tag
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'i18n-active_record'
   # , :require => 'i18n/active_record'
   s.add_dependency 'responders'
-  s.add_dependency 'jsonapi-resources'
+  s.add_dependency 'jsonapi-resources', '0.8.1'
   s.add_dependency 'paloma'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'simple_form'
@@ -44,6 +44,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'cloudinary'
   s.add_dependency 'rets'
   s.add_dependency 'active_hash'
+
+  # s.add_dependency 'redis'
+  # # logster gem has to be after redis..
+  # s.add_dependency 'logster'
 
   s.add_development_dependency 'byebug'
   # s.add_development_dependency 'pg'

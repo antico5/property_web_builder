@@ -13,29 +13,25 @@ module Pwb
 
     def show
       @agency = Agency.last
-      if @agency
+      @website = Website.unique_instance
+      @admin_setup = Pwb::ClientSetup.find_by_name "default" || Pwb::ClientSetup.first
+      if @agency && @website
         return render json: {
-          #TODO - change legacy admin code to retrieve info below
-          #from agency
-          # and to use supported_locales instead of supported_languages
-          tenant:             @agency.as_json(
-            :only =>
-            ["social_media","default_client_locale",
-             "default_admin_locale","raw_css","site_template_id"],
-            :methods => ["style_variables","supported_languages",
-                         "available_locales"]),
-          # supported_languages: [:en,:es]
-
+          website: @website,
+          # supported_currencies for agency will be used when clients have the ability
+          # to instantly convert between currencies
           agency: @agency,
-          primary_address: @agency.primary_address
+          primary_address: @agency.primary_address,
+          setup: @admin_setup.as_json["attributes"]
           # current_user: current_user.as_json(:only => ["email", "first_names","last_names","phone_number_primary","skype"])
         }
 
       else
         return render json: {
-          tenant: {},
+          setup: {},
           agency: {},
           primary_address: {},
+          website: @website
           # current_user: current_user.as_json(:only => ["email", "first_names","last_names","phone_number_primary","skype"])
         }
 
@@ -50,31 +46,32 @@ module Pwb
         # adding :social_media to the list permitted by strong params does not work so doing below
         # which is  ugly but works
         @agency.social_media = params[:agency][:social_media]
+        # @agency.style_variables = params[:agency][:style_variables]
         @agency.save!
       end
       return render json: @agency
     end
 
-    def update_legacy
-      @agency = Agency.last
+    # def update_legacy
+    #   @agency = Agency.last
 
-      @agency.style_variables = params[:style_variables]
-      @agency.social_media = params[:social_media]
+    #   @agency.style_variables = params[:style_variables]
+    #   @agency.social_media = params[:social_media]
 
-      # ActionController::Base.helpers.sanitize_css
-      # TODO - allow raw_css after sanitizing with above
-      # @agency.raw_css = params[:raw_css]
+    #   # ActionController::Base.helpers.sanitize_css
+    #   # TODO - allow raw_css after sanitizing with above
+    #   # @agency.raw_css = params[:raw_css]
 
-      if params[:site_template_id].present?
-        # TODO - verify site_template exists
-        @agency.site_template_id = params[:site_template_id]
-      end
+    #   if params[:site_template_id].present?
+    #     # TODO - verify site_template exists
+    #     @agency.site_template_id = params[:site_template_id]
+    #   end
+    #   # TODO - rename supported_languages client side
+    #   @agency.supported_locales = params[:supported_languages]
+    #   @agency.save!
 
-      # TODO - rename supported_languages client side
-      @agency.supported_locales = params[:supported_languages]
-      @agency.save!
-      return render json: { "success": true }, status: :ok, head: :no_content
-    end
+    #   return render json: { "success": true }, status: :ok, head: :no_content
+    # end
 
 
     def update_master_address
@@ -94,12 +91,23 @@ module Pwb
     private
 
     def address_params
-      params.require(:address).permit(:street_address, :postal_code, :city, :region, :country, :longitude, :latitude)
+      params.require(:address).permit(
+        :street_address, :street_number,
+        :postal_code, :city,
+        :region, :country,
+      :longitude, :latitude)
     end
 
 
     def agency_params
-      params.require(:agency).permit(:company_name, :display_name, :phone_number_primary, :phone_number_other)
+      params.require(:agency).permit(
+        :email_for_property_contact_form,
+        :email_for_general_contact_form,
+        :email_primary,
+        :company_name, :display_name,
+        :phone_number_primary, :phone_number_other,
+        :theme_name, :default_currency,
+      supported_locales: [])
     end
 
   end

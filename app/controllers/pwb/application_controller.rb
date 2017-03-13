@@ -2,13 +2,14 @@ module Pwb
   class ApplicationController < ActionController::Base
     protect_from_forgery with: :exception
 
-    before_filter :current_agency, :sections, :set_locale, :set_theme_path
+    before_action :footer_content, :current_agency_and_website, :sections, 
+    :set_locale, :set_theme_path
 
     def set_theme_path
-      theme_name = "default"
-      if Agency.last && Agency.last.theme_name.present?
-        theme_name = Agency.last.theme_name
-      end
+      theme_name = Agency.unique_instance.theme_name || "default"
+      # if Agency.last && Agency.last.theme_name.present?
+      #   theme_name = Agency.last.theme_name
+      # end
       prepend_view_path "#{Pwb::Engine.root}/app/themes/#{theme_name}/views/"
       # below allows themes installed in Rails app consuming Pwb to work
       prepend_view_path "#{Rails.root}/app/themes/#{theme_name}/views/"
@@ -17,17 +18,18 @@ module Pwb
     end
 
     def set_locale
-      agency = current_agency
-      locale = agency.default_client_locale_to_use
+      # agency = current_agency
+      locale = Website.unique_instance.default_client_locale_to_use
       # below just causes confusion for now
       # if current_user
       #   locale = current_user.default_client_locale
       # end
-      if params[:locale]
+      # byebug
+      if params[:locale] && (I18n.locale_available? params[:locale])
         # passed in params override user's default
         locale = params[:locale]
       end
-      I18n.locale = locale
+      I18n.locale = locale.to_sym
     end
 
     # http://www.rubydoc.info/github/plataformatec/devise/master/ActionDispatch/Routing/Mapper#devise_for-instance_method
@@ -38,8 +40,14 @@ module Pwb
 
     private
 
-    def current_agency
-      @current_agency ||= (Agency.last || Agency.create)
+    def current_agency_and_website
+      @current_agency ||= Agency.unique_instance
+      # (Agency.last || Agency.create)
+      @current_website = Website.unique_instance
+    end
+
+    def footer_content
+      @footer_content = Content.find_by_key("footerInfo") || OpenStruct.new
     end
 
     def sections

@@ -46,11 +46,14 @@
   constructed_area: 190.0
   energy_rating:
   energy_performance:
-  title_en: Example villa for sale,
+  title_en: Example villa for sale.
   title_es: Ejemplo de villa para vender.  
   description_en: Description of the amazing villa for sale. 
   description_es: Descripción de una villa estupenda para vender.
-  photo_urls: 
-    - https://inmo-a.s3.amazonaws.com/property/83/image_20bc779090.jpg
-    - https://inmo-a.s3.amazonaws.com/property/90/image_20ba3b5ef9.jpg
+  photo_files:
+    - db/example_images/new_villa.jpg
+    - db/example_images/kitchen_modern.jpg
+  # photo_urls: 
+  #   - https://inmo-a.s3.amazonaws.com/property/83/image_20bc779090.jpg
+  #   - https://inmo-a.s3.amazonaws.com/property/90/image_20ba3b5ef9.jpg
 

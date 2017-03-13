@@ -4,7 +4,6 @@ module Pwb
   RSpec.describe Api::V1::AgencyController, type: :controller do
     routes { Pwb::Engine.routes }
 
-
     context 'without signing in' do
       before(:each) do
         sign_in_stub nil
@@ -12,7 +11,6 @@ module Pwb
       it "should not have a current_user" do
         expect(subject.current_user).to eq(nil)
       end
-
     end
 
     context 'with non_admin user' do
@@ -39,9 +37,9 @@ module Pwb
       end
 
       describe 'GET #show' do
-        let!(:agency)    { FactoryGirl.create(:pwb_agency) }
+        let!(:agency) { FactoryGirl.create(:pwb_agency, company_name: 'my re') }
 
-        it 'returns correct agency' do
+        it 'returns correct agency and default setup info' do
           get :show, params: {}
           # , format: :json
 
@@ -51,11 +49,10 @@ module Pwb
           result = JSON.parse(response.body)
 
           expect(result).to have_key('agency')
-          expect(result['agency']['id']).to eq(agency.id)
-
+          expect(result['agency']['company_name']).to eq(agency.company_name)
+          expect(result['setup']['name']).to eq('default')
         end
       end
     end
-
   end
 end

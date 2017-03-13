@@ -3,6 +3,13 @@ Pwb::Engine.routes.draw do
   root to: 'welcome#index'
   resources :welcome, only: :index
 
+  # admin_constraint = lambda do |request|
+  #   request.env['warden'].authenticate? and request.env['warden'].user.admin?
+  # end
+  # constraints admin_constraint do
+  #   mount Logster::Web, at: "/logs"
+  # end
+
   authenticate :user do
     get "/admin" => "admin_panel#show"
     get "/admin/*path" => "admin_panel#show"
@@ -45,28 +52,46 @@ Pwb::Engine.routes.draw do
 
   end
 
+  namespace :api_public do
+    namespace :v1 do
+      jsonapi_resources :props
+    end
+  end
+
   authenticate :user do
+    namespace :import do
+      post "/translations" => "translations#multiple"
+      post "/web_contents" => "web_contents#multiple"
+    end
+    namespace :export do
+      get "/translations/all" => "translations#all"
+      get "/web_contents/all" => "web_contents#all"
+      get "/website/all" => "website#all"
+      get "/properties" => "properties#all"
+    end
+ 
     namespace :api do
       namespace :v1 do
-        get "/client_translations/:locale" => "client_translations#index"
+        get "/translations/list/:locale" => "translations#list"
 
 
         # below gets FieldConfig values for a batch_key such as "person-titles"
         # and returns all the locale translations so an admin
         # can manage them..
-        get "/lang/admin_translations/:batch_key" => "client_translations#get_by_batch"
-        post "/lang/admin_translations" => "client_translations#create_translation_value"
+        get "/translations/batch/:batch_key" => "translations#get_by_batch"
+        post "/translations" => "translations#create_translation_value"
 
-        # post "/lang/admin_translations/add_locale_translation" => "client_translations#add_locale_translation"
-        delete "/lang/admin_translations/:id" => "client_translations#delete_translation_values"
+        post "/translations/create_for_locale" => "translations#create_for_locale"
+        put "/translations/:id/update_for_locale" => "translations#update_for_locale"
+        delete "/translations/:id" => "translations#delete_translation_values"
 
 
         get "/agency" => "agency#show"
         put "/agency" => "agency#update"
+        put "/website" => "website#update"
         get "/infos" => "agency#infos"
 
-        #TODO - change legacy admin code to put to /agency
-        put "tenant" => "agency#update_legacy"
+        # put "tenant" => "agency#update_legacy"
         put "/master_address" => "agency#update_master_address"
 
         # get "/web-contents" => "agency#infos"
@@ -74,8 +99,9 @@ Pwb::Engine.routes.draw do
         jsonapi_resources :properties
         jsonapi_resources :sections
         jsonapi_resources :web_contents
-        get "/select_values" => "select_values#by_field_names"
 
+        get "/themes" => "themes#index"
+        get "/select_values" => "select_values#by_field_names"
 
         # TODO - rename properties below to prop
         post "properties/update_extras" => "properties#update_extras"
@@ -94,7 +120,7 @@ Pwb::Engine.routes.draw do
         # where only one photo is allowed
 
         post '/web_contents/photo/:tag' => 'web_contents#create_content_with_photo'
-        # above for carousel photos where I need to be able to 
+        # above for carousel photos where I need to be able to
         # create content along with the photo
 
       end

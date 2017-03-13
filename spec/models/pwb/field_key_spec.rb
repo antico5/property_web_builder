@@ -1,10 +1,9 @@
 require 'rails_helper'
 
 module Pwb
-
   RSpec.describe FieldKey, type: :model do
     before(:each) do
-      @fk1  = FactoryGirl.create(
+      @fk1 = FactoryGirl.create(
         :pwb_field_key,
         global_key: "propertyStates.nuevo",
         tag: "property-states",
@@ -13,7 +12,7 @@ module Pwb
     end
 
     describe 'get_options_by_tag' do
-      it 'should return ' do
+      it 'should return correct number of options' do
         ps_opts = FieldKey.get_options_by_tag "property-states"
         # byebug
         expect(ps_opts.count).to eq(1)
@@ -42,7 +41,6 @@ module Pwb
   #   expect(field_key.label(:code)).to eq('kl')
   # end
 
-
   # describe '.table_name' do
   #   it "should return table name" do
   #     tk = FieldKey.get_options_by_tag "property-types"
@@ -50,5 +48,4 @@ module Pwb
   #     expect(FieldKey.table_name).to eq('pwb_field_keys')
   #   end
   # end
-
 end

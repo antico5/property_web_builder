@@ -1,6 +1,3 @@
-#https://github.com/tigrish/devise-i18n
-#copied from above gem - installed it but does not work
-# even "rails g devise:views:locale en" returns an error
 en:
   activerecord:
     attributes:

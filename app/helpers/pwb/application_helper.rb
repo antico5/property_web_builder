@@ -1,6 +1,31 @@
 module Pwb
   module ApplicationHelper
 
+    def page_title(title_val)
+      content_for :page_title, title_val.to_s
+    end
+
+    def area_unit(property)
+      area_unit = "m<sup>2</sup>"
+      if property.area_unit && (property.area_unit == "sqft")
+        area_unit = "sqft"
+      end
+      area_unit.html_safe
+    end
+
+    def localized_link_to(locale_with_var = nil, options = nil, html_options = nil)
+      link_class =  locale_with_var["variant"]
+      link = "<a class='#{link_class}' href='/#{options["locale"]}'></a>"
+      return link.html_safe
+
+      # if params["controller"] && params["controller"].include?("devise/")
+      #   link = "<a class='#{link_class}' href='/#{options["locale"]}'></a>"
+      #   return link.html_safe
+      # else
+      #   return link_to "", options, html_options
+      # end
+    end
+
     def t_or_unknown key
       if key.is_a?(String) && key.empty?
         return t "unknown"
@@ -71,8 +96,12 @@ module Pwb
 
 
     def social_media_link(agency, field_name, field_label, field_icon)
+      social_media = nil
       # binding.pry
-      if agency && agency.social_media[field_name].present?
+      if agency.social_media.present? && agency.social_media[field_name].present?
+        social_media = agency.social_media
+      end
+      if social_media
         html = <<-HTML
         <a href="#{ agency.social_media[field_name] }" title="#{ field_label }" target="_blank" class="">
         <i class="fa #{ field_icon }"></i>

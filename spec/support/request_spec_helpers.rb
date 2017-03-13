@@ -1,5 +1,4 @@
 module RequestSpecHelpers
-
   # https://github.com/plataformatec/devise/wiki/How-To:-sign-in-and-out-a-user-in-Request-type-specs-(specs-tagged-with-type:-:request)
   include Warden::Test::Helpers
 
@@ -28,6 +27,7 @@ module RequestSpecHelpers
     logout(scope)
   end
 
+  # http://matthewlehner.net/rails-api-testing-guidelines/
   def response_body_as_json
     JSON.parse(response.body)
   end
@@ -37,5 +37,4 @@ module RequestSpecHelpers
   def warden_scope(resource)
     resource.class.name.underscore.to_sym
   end
-
 end

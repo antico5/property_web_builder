@@ -30,6 +30,8 @@ group :development, :test do
   # end
   gem 'simplecov',                 require: false
   unless ENV['CI']
+    # uncommenting below will result in travis ci prompting me to Run `bundle install` elsewhere and add the
+    # updated Gemfile.lock to version control
     # gem 'launchy'
     # gem 'annotate'
     # gem 'bumpy'
@@ -41,10 +43,12 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'pry-byebug'
   gem 'capybara'
-  # gem 'database_cleaner', '~> 1.3'
+  gem 'database_cleaner'
+  # , '~> 1.3'
   gem 'rails-controller-testing'
   gem 'factory_girl_rails'
-  # gem 'poltergeist', '~> 1.10'
+  gem 'poltergeist'
+  # , '~> 1.10'
   # gem 'rspec-activemodel-mocks', '~> 1.0'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
@@ -52,4 +56,5 @@ group :development, :test do
   gem 'guard'
   gem 'guard-rspec', require: false
   gem 'zeus'
+  gem 'json_spec'
 end

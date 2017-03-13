@@ -11,7 +11,7 @@ module Pwb
     def about_us
       @content = Content.find_by_key("aboutUs")
       @page_title = I18n.t("aboutUs")
-      @page_description = @content.raw
+      @page_description = @content.present? ? @content.raw : ""
       # @page_keywords    = 'Site, Login, Members'
       # @about_us_image_url = Content.get_photo_url_by_key("aboutUs")
       # @about_us_image_url = Content.find_by_key("aboutUs").content_photos.first.image_url || "http://moodleboard.com/images/prv/estate/estate-slider-bg-1.jpg"
@@ -66,8 +66,8 @@ module Pwb
           host: request.host,
           origin_ip: request.ip,
           user_agent: request.user_agent,
-          delivery_email: @current_agency.email_for_general_contact_form,
-          origin_email: params[:contact][:email]
+          delivery_email: @current_agency.email_for_general_contact_form
+          # origin_email: params[:contact][:email]
       })
       unless @enquiry.save && @client.save
         @error_messages = @error_messages + @client.errors.full_messages
@@ -75,20 +75,27 @@ module Pwb
         return render "pwb/ajax/contact_us_errors"
       end
 
+      unless @current_agency.email_for_general_contact_form.present?
+        # in case a delivery email has not been set
+        @enquiry.delivery_email = "no_delivery_email@propertywebbuilder.com"
+      end
+
       @enquiry.client = @client
       @enquiry.save
 
-      EnquiryMailer.general_enquiry_targeting_agency(@client, @enquiry).deliver
+      # @enquiry.delivery_email = ""
+      EnquiryMailer.general_enquiry_targeting_agency(@client, @enquiry).deliver_now
 
       # @enquiry.delivery_success = true
       # @enquiry.save
+
       @flash = I18n.t "contact.success"
-      return render "pwb/ajax/contact_us_success"
+      return render "pwb/ajax/contact_us_success", layout: false
     rescue => e
       # TODO - log error to logger....
       # flash.now[:error] = 'Cannot send message.'
-      @error_messages = [ I18n.t("contact.error") ]
-      return render "pwb/ajax/contact_us_errors"
+      @error_messages = [ I18n.t("contact.error"), e ]
+      return render "pwb/ajax/contact_us_errors", layout: false
     end
 
 
